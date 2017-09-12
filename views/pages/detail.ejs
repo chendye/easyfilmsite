@@ -1,0 +1,25 @@
+<%- include('../includes/header') %>
+<div class="content">
+  <div class="row">
+    <div class="col-md-7">
+      <vedio src="<%= moive.flash %>" width="720" height="600" preload="auto" controls="controls" poster="<%= moive.poster%>"></vedio>
+    </div>
+    <div class="col-md-5">
+      <dl class="dl-horizontal">
+        <dt>电影名字</dt>
+        <dd><%= moive.title %></dd>
+        <dt>导演</dt>
+        <dd><%= moive.doctor %></dd>
+        <dt>国家</dt>
+        <dd><%= moive.country %></dd>
+        <dt>语言</dt>
+        <dd><%= moive.language %></dd>
+        <dt>上映年份</dt>
+        <dd><%= moive.year %></dd>
+        <dt>简介</dt>
+        <dd><%= moive.summary %></dd>
+      </dl>
+    </div> 
+  </div>
+</div>
+<%- include('../includes/footer') %>

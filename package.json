@@ -1,0 +1,21 @@
+{
+  "name": "moive",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.2.1",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.10"
+  },
+  "description": "",
+  "devDependencies": {
+    "mysql": "^2.14.1"
+  }
+}
