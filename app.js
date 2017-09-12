@@ -27,10 +27,9 @@ app.listen(port, '127.0.0.1');
 // index page
 app.get('/', function(req, res) {
   // 查询所有数据内容
-  connection.query('SELECT * FROM moive_data', function(error, results, fields) {
+  connection.query('select * from moive_data', function(error, results, fields) {
     if (error) {
       console.log(error);
-      connection.end();
     } else {
       res.render('index', {
         title: '电影网首页',
@@ -44,10 +43,9 @@ app.get('/', function(req, res) {
 app.get('/moive/:id', function(req, res) {
   let id = req.params.id;
 
-  connection.query(`SELECT * from moive_data WHERE _id = ${id}`, function(error, results, fields) {
+  connection.query(`select * from moive_data where _id = ${id}`, function(error, results, fields) {
     if (error) {
       console.log(error);
-      connection.end();
     } else {
       res.render('detail', {
         title: '电影网详情页' + results[0].title,
@@ -59,10 +57,9 @@ app.get('/moive/:id', function(req, res) {
 
 // list page
 app.get('/admin/list', function(req, res) {
-  connection.query('SELECT * FROM moive_data', function(error, results, fields) {
+  connection.query('select * from moive_data', function(error, results, fields) {
     if (error) {
       console.log(error);
-      connection.end();
     } else {
       res.render('list', {
         title: '电影网列表页',
@@ -77,6 +74,7 @@ app.get('/admin/moive', function(req, res) {
   res.render('admin', {
     title: '电影网录入页',
     moive: [{
+      _id: '',
       title: '',
       doctor: '',
       country: '',
@@ -92,13 +90,13 @@ app.get('/admin/moive', function(req, res) {
 // 添加数据
 app.post('/admin/add', (req, res) => {
   let [title, doctor, country, year, poster, language, flash, summary] = [req.body.title, req.body.doctor, req.body.country, req.body.year, req.body.poster, req.body.language, req.body.flash, req.body.summary];
-
-  connection.query(`insert into moive_data values (null,${title},${doctor},${country},${year},${poster},${language},${flash},${summary})`, function(error, results, fields) {
+  // 注意添加char test类型的字符串时 需要加''哦
+  connection.query(`insert into moive_data values (null,'${title}','${doctor}','${country}',${year},'${poster}','${language}','${flash}','${summary}')`, function(error, results, fields) {
     if (error) {
       console.log(error);
-      connection.end();
     } else {
       console.log('add: ', results);
+      res.send({ status: 200, msg: "add success", url: "/" });
     }
   });
 });
@@ -106,15 +104,44 @@ app.post('/admin/add', (req, res) => {
 // 删除数据
 app.delete('/admin/list', function(req, res) {
   let id = req.body.id;
-  console.log(id);
 
   connection.query(`delete from moive_data where _id = ${id}`, function(error, results, fields) {
     if (error) {
       console.log(error);
-      connection.end();
     } else {
       console.log('delete: ', results);
-      res.redirect("/admin/list"); // 刷新页面，重定向到本页面
+      // 刷新页面，重定向到本页面
+      res.send({ status: 200, msg: "delete success", url: "/" });
+    }
+  });
+});
+
+// 修改数据
+app.get('/admin/update/:id', function(req, res) {
+  let id = req.params.id;
+
+  connection.query(`select * from moive_data where _id = ${id}`, function(error, results, fields) {
+    if (error) {
+      console.log(error);
+    } else {
+      res.render('admin', {
+        title: '电影网列表页',
+        moive: results
+      });
+    }
+  });
+});
+
+app.put('/admin/add', function(req, res) {
+  let id = req.body.id;
+  let [title, doctor, country, year, poster, language, flash, summary] = [req.body.title, req.body.doctor, req.body.country, req.body.year, req.body.poster, req.body.language, req.body.flash, req.body.summary];
+
+  connection.query(`update moive_data set title=?,doctor=?,country=?,year=?,poster=?,language=?,flash=?,summary=? where _id = ${id}`, [title, doctor, country, year, poster, language, flash, summary], function(error, results, fields) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('update: ' + results);
+      res.send({ status: 200, msg: "update success", url: "/" });
     }
   });
 });

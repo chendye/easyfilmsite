@@ -1,9 +1,18 @@
-// 新增一条数据
+// 新增一条数据 ,更新数据
 $('#addOption').on('click', function() {
+  let hiddenVal = $('#inputHidden').val(),
+    itype = "PUT";
+
+  if (!hiddenVal) {
+    // 隐藏域值为null，新增数据
+    itype = "POST";
+  }
+
   $.ajax({
-    type: "POST",
+    type: itype,
     url: "/admin/add",
     data: {
+      id: hiddenVal,
       title: $("#inputTitle").val(),
       doctor: $("#inputDoctor").val(),
       country: $("#inputCountry").val(),
@@ -14,7 +23,11 @@ $('#addOption').on('click', function() {
       summary: $("#inputSummary").val(),
     },
     success: function(res) {
-      console.log("Data Saved: " + res);
+      debugger
+      if (res.status === 200) {
+        window.location.href = res.url;
+        console.log('111111')
+      }
     }
   });
 });
@@ -30,7 +43,10 @@ $('.del').on('click', function() {
       id: del_id
     },
     success: function(res) {
-      console.log("Data Saved: " + res);
+      if (res.status === 200) {
+        window.location.href = res.url;
+        console.log('111111')
+      }
     }
   });
 });
