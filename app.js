@@ -96,7 +96,7 @@ app.post('/admin/add', (req, res) => {
       console.log(error);
     } else {
       console.log('add: ', results);
-      res.send({ status: 200, msg: "add success", url: "/" });
+      res.send({ status: 200, msg: "add success", url: "/admin/list" });
     }
   });
 });
@@ -131,7 +131,7 @@ app.get('/admin/update/:id', function(req, res) {
     }
   });
 });
-
+// 更新数据
 app.put('/admin/add', function(req, res) {
   let id = req.body.id;
   let [title, doctor, country, year, poster, language, flash, summary] = [req.body.title, req.body.doctor, req.body.country, req.body.year, req.body.poster, req.body.language, req.body.flash, req.body.summary];

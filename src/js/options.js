@@ -7,10 +7,11 @@ $('#addOption').on('click', function() {
     // 隐藏域值为null，新增数据
     itype = "POST";
   }
-
   $.ajax({
     type: itype,
     url: "/admin/add",
+    async: true,
+    dataType: "json",
     data: {
       id: hiddenVal,
       title: $("#inputTitle").val(),
@@ -39,13 +40,14 @@ $('.del').on('click', function() {
   $.ajax({
     type: "DELETE",
     url: "/admin/list",
+    dataType: "json",
+    async: true,
     data: {
       id: del_id
     },
     success: function(res) {
       if (res.status === 200) {
         window.location.href = res.url;
-        console.log('111111')
       }
     }
   });
