@@ -2,15 +2,15 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'moive'
-});
-
-connection.connect(); // 连接数据库
+var query = require('./mysql-pool'); // 使用连接池连接数据库
+// var mysql = require('mysql');
+// var connection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'moive'
+// });
+// connection.connect(); // 连接数据库
 
 var port = process.env.PORT || 3000; // 设置启动端口
 var app = express();
@@ -27,7 +27,7 @@ app.listen(port, '127.0.0.1');
 // index page
 app.get('/', function(req, res) {
   // 查询所有数据内容
-  connection.query('select * from moive_data', function(error, results, fields) {
+  query('select * from moive_data', [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
@@ -43,7 +43,7 @@ app.get('/', function(req, res) {
 app.get('/moive/:id', function(req, res) {
   let id = req.params.id;
 
-  connection.query(`select * from moive_data where _id = ${id}`, function(error, results, fields) {
+  query(`select * from moive_data where _id = ${id}`, [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
@@ -57,7 +57,7 @@ app.get('/moive/:id', function(req, res) {
 
 // list page
 app.get('/admin/list', function(req, res) {
-  connection.query('select * from moive_data', function(error, results, fields) {
+  query('select * from moive_data', [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
@@ -91,12 +91,16 @@ app.get('/admin/moive', function(req, res) {
 app.post('/admin/add', (req, res) => {
   let [title, doctor, country, year, poster, language, flash, summary] = [req.body.title, req.body.doctor, req.body.country, req.body.year, req.body.poster, req.body.language, req.body.flash, req.body.summary];
   // 注意添加char test类型的字符串时 需要加''哦
-  connection.query(`insert into moive_data values (null,'${title}','${doctor}','${country}',${year},'${poster}','${language}','${flash}','${summary}')`, function(error, results, fields) {
+  query(`insert into moive_data values (null,'${title}','${doctor}','${country}',${year},'${poster}','${language}','${flash}','${summary}')`, [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
       console.log('add: ', results);
-      res.send({ status: 200, msg: "add success", url: "/admin/list" });
+      res.send({
+        status: 200,
+        msg: "add success",
+        url: "/admin/list"
+      });
     }
   });
 });
@@ -105,13 +109,17 @@ app.post('/admin/add', (req, res) => {
 app.delete('/admin/list', function(req, res) {
   let id = req.body.id;
 
-  connection.query(`delete from moive_data where _id = ${id}`, function(error, results, fields) {
+  query(`delete from moive_data where _id = ${id}`, [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
       console.log('delete: ', results);
       // 刷新页面，重定向到本页面
-      res.send({ status: 200, msg: "delete success", url: "/" });
+      res.send({
+        status: 200,
+        msg: "delete success",
+        url: "/"
+      });
     }
   });
 });
@@ -120,7 +128,7 @@ app.delete('/admin/list', function(req, res) {
 app.get('/admin/update/:id', function(req, res) {
   let id = req.params.id;
 
-  connection.query(`select * from moive_data where _id = ${id}`, function(error, results, fields) {
+  query(`select * from moive_data where _id = ${id}`, [], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
@@ -136,12 +144,16 @@ app.put('/admin/add', function(req, res) {
   let id = req.body.id;
   let [title, doctor, country, year, poster, language, flash, summary] = [req.body.title, req.body.doctor, req.body.country, req.body.year, req.body.poster, req.body.language, req.body.flash, req.body.summary];
 
-  connection.query(`update moive_data set title=?,doctor=?,country=?,year=?,poster=?,language=?,flash=?,summary=? where _id = ${id}`, [title, doctor, country, year, poster, language, flash, summary], function(error, results, fields) {
+  query(`update moive_data set title=?,doctor=?,country=?,year=?,poster=?,language=?,flash=?,summary=? where _id = ${id}`, [title, doctor, country, year, poster, language, flash, summary], function(error, results, fields) {
     if (error) {
       console.log(error);
     } else {
       console.log('update: ' + results);
-      res.send({ status: 200, msg: "update success", url: "/" });
+      res.send({
+        status: 200,
+        msg: "update success",
+        url: "/"
+      });
     }
   });
 });
